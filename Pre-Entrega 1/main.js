@@ -20,18 +20,18 @@ function calcular(operacion, num1, num2) {
     return resultado;
 }
 
-let continuar = true;
+let aceptar = true;
 
-while (continuar) {
-    const operacion = prompt("Ingrese la operación que desea realizar (+, -, *, /):");
+while (aceptar) {
+    let operacion = prompt("Ingrese la operación que desea realizar (+, -, *, /):");
 
     if (operacion !== "+" && operacion !== "-" && operacion !== "*" && operacion !== "/") {
         alert("Operacion no valida. Por favor, ingrese una operacion valida.");
         continue;
     }
 
-    const num1 = parseFloat(prompt("Ingrese un numero"));
-    const num2 = parseFloat(prompt("Ingrese otro numero"));
+    let num1 = parseFloat(prompt("Ingrese un numero"));
+    let num2 = parseFloat(prompt("Ingrese otro numero"));
 
     if (isNaN(num1) || isNaN(num2)) {
         alert("Por favor, ingrese numeros validos.");
