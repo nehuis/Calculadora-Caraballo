@@ -93,7 +93,9 @@ const resultadoBuscado = parseFloat(prompt("Ingrese un resultado a buscar:"));
 const operacionesEncontradas = miCalculadora.buscarPorResultado(resultadoBuscado);
 
 if (operacionesEncontradas.length > 0) {
-    alert(`Operaciones con resultado ${resultadoBuscado}:\n` + miCalculadora.mostrarResultados(operacionesEncontradas));
+    let mensaje = '';
+    operacionesEncontradas.forEach(op => mensaje += `${op.num1} ${op.operacion} ${op.num2} = ${op.resultado}\n`);
+    alert(`Operaciones con resultado ${resultadoBuscado}:\n ${mensaje}` );
 } else {
     alert(`No se encontraron operaciones con resultado ${resultadoBuscado}.`);
 }
