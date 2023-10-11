@@ -41,4 +41,6 @@ while (aceptar) {
     const resultado = calcular(operacion, num1, num2);
 
     alert("Resultado: " + resultado);
+
+    aceptar = confirm("Desea realizar otra operación?")
 }
