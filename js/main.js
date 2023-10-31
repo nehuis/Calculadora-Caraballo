@@ -5,6 +5,7 @@ class Calculadora {
     this.botones = document.querySelectorAll(".btn");
     this.operacionActual = "";
     this.loadResultados();
+    this.clickEnabled = true;
   }
 
   ejecutarCalculadora() {
@@ -22,8 +23,10 @@ class Calculadora {
           return;
         }
 
-        if (boton.id === "igual") {
+        if (boton.id === "igual" && this.clickEnabled) {
+          this.clickEnabled = false;
           this.realizarOperacion();
+          this.clickEnabled = true;
           return;
         }
 
@@ -68,33 +71,28 @@ class Calculadora {
     }
   }
 
-realizarOperacion() {
-  try {
-    const resultado = new Function(`return ${this.operacionActual}`)();
-    this.resultados.push({
-      operacion: this.operacionActual,
-      resultado: resultado,
-    });
-    this.saveResultados();
-    this.pantalla.textContent = resultado;
-    this.calcularOperacion();
-  } catch {
-    this.pantalla.textContent = "Error";
+  realizarOperacion() {
+    try {
+      const resultado = this.calcularOperacion(this.operacionActual);
+      this.resultados.push({
+        operacion: this.operacionActual,
+        resultado: resultado,
+      });
+      this.saveResultados();
+      this.pantalla.textContent = resultado.toString();
+    } catch {
+      this.pantalla.textContent = "Error";
+    }
   }
-}
 
   mostrarResultados() {
-    const resultadosList = document.createElement("ol");
-    resultadosList.classList.add("resultados-list");
+    this.pantalla.innerHTML = ""; 
 
     this.resultados.forEach(({ operacion, resultado }) => {
-      const resultadoItem = document.createElement("li");
+      const resultadoItem = document.createElement("p");
       resultadoItem.textContent = `${operacion} = ${resultado}`;
-      resultadosList.appendChild(resultadoItem);
+      this.pantalla.appendChild(resultadoItem);
     });
-
-    this.pantalla.innerHTML = "";
-    this.pantalla.appendChild(resultadosList);
   }
 
   saveResultados() {
@@ -106,6 +104,10 @@ realizarOperacion() {
     if (storedResultados) {
       this.resultados = JSON.parse(storedResultados);
     }
+  }
+
+  calcularOperacion(operacion) {
+    return Function('"use strict";return (' + operacion + ')')();
   }
 }
 
