@@ -8,6 +8,17 @@ class Calculadora {
     this.clickEnabled = true;
   }
 
+  async cargarDatosDesdeJSON() {
+    try {
+      const response = await fetch('../data.json');
+      const datos = await response.json();
+      return datos;
+    } catch (error) {
+      console.error('Error al cargar datos desde JSON:', error);
+      throw error;
+    }
+  }
+
   ejecutarCalculadora() {
     this.botones.forEach((boton) => {
       boton.addEventListener("click", () => {
@@ -71,22 +82,35 @@ class Calculadora {
     }
   }
 
-  realizarOperacion() {
+  async realizarOperacion() {
     try {
+      const datosJSON = await this.cargarDatosDesdeJSON();
       const resultado = this.calcularOperacion(this.operacionActual);
-      this.resultados.push({
-        operacion: this.operacionActual,
-        resultado: resultado,
-      });
-      this.saveResultados();
-      this.pantalla.textContent = resultado.toString();
+
+      const sumaResultados = datosJSON.reduce((suma, dato) => suma + dato.result, 0);
+
+      this.registrarResultado(this.operacionActual, resultado);
+      this.mostrarResultadoEnPantalla(resultado);
     } catch {
-      this.pantalla.textContent = "Error";
+      this.mostrarErrorEnPantalla();
     }
   }
 
+  registrarResultado(operacion, resultado) {
+    this.resultados.push({ operacion, resultado });
+    this.saveResultados();
+  }
+
+  mostrarResultadoEnPantalla(resultado) {
+    this.pantalla.textContent = resultado.toString();
+  }
+
+  mostrarErrorEnPantalla() {
+    this.pantalla.textContent = "Error";
+  }
+
   mostrarResultados() {
-    this.pantalla.innerHTML = ""; 
+    this.pantalla.innerHTML = "";
 
     this.resultados.forEach(({ operacion, resultado }) => {
       const resultadoItem = document.createElement("p");
