@@ -4,8 +4,15 @@ class Calculadora {
     this.pantalla = document.querySelector(".pantalla");
     this.botones = document.querySelectorAll(".btn");
     this.operacionActual = "";
+    this.tiposDeCambio = null;
     this.loadResultados();
     this.clickEnabled = true;
+
+    // Nuevo: elemento para mostrar mensajes
+    this.mensajeElemento = document.getElementById("mensaje");
+
+    this.ejecutarCalculadora();
+    this.obtenerTiposDeCambio();
   }
 
   ejecutarCalculadora() {
@@ -41,7 +48,28 @@ class Calculadora {
     });
   }
 
+  obtenerTiposDeCambio() {
+    fetch('data.json')
+      .then(response => response.json())
+      .then(data => {
+        this.tiposDeCambio = data.tiposDeCambio;
+        // Nuevo: mostrar mensaje en la consola sin afectar la página
+        this.mostrarMensajeEnConsola("Tipos de cambio cargados: " + JSON.stringify(data));
+      })
+      .catch(error => {
+        // Nuevo: mostrar mensaje en la consola sin afectar la página
+        this.mostrarMensajeEnConsola("Error al cargar los tipos de cambio: " + error);
+      });
+  }
+
   agregarCaracter(caracter) {
+    const ultimoCaracter = this.operacionActual.slice(-1);
+
+    // Evitar duplicar operadores
+    if (this.esOperador(caracter) && this.esOperador(ultimoCaracter)) {
+      return;
+    }
+
     if (
       this.pantalla.textContent === "0" ||
       this.pantalla.textContent === "Error"
@@ -52,11 +80,21 @@ class Calculadora {
       this.pantalla.textContent += caracter;
       this.operacionActual += caracter;
     }
+
+    // Limpiar el mensaje después de agregar un nuevo caracter
+    this.limpiarMensaje();
+  }
+
+  esOperador(caracter) {
+    const operadores = ["+", "-", "*", "/"];
+    return operadores.includes(caracter);
   }
 
   limpiarPantalla() {
     this.pantalla.textContent = "0";
     this.operacionActual = "";
+    // Nuevo: limpiar el mensaje después de limpiar la pantalla
+    this.limpiarMensaje();
   }
 
   borrarCaracter() {
@@ -92,6 +130,8 @@ class Calculadora {
 
   mostrarErrorEnPantalla() {
     this.pantalla.textContent = "Error";
+    // Nuevo: mostrar mensaje de error
+    this.mostrarMensaje("Error en la operación", true);
   }
 
   mostrarResultados() {
@@ -118,7 +158,29 @@ class Calculadora {
   calcularOperacion(operacion) {
     return Function('"use strict";return (' + operacion + ')')();
   }
+
+  // Nuevo: método para mostrar mensajes en la consola sin afectar la página
+  mostrarMensajeEnConsola(mensaje) {
+    console.log(mensaje);
+  }
+
+  // Nuevo: método para mostrar mensajes en la interfaz
+  mostrarMensaje(mensaje, esError = false) {
+    this.mensajeElemento.textContent = mensaje;
+
+    // Nuevo: mostrar o ocultar el mensaje de error según sea necesario
+    if (esError) {
+      this.mensajeElemento.classList.add("mensaje-error");
+    } else {
+      this.mensajeElemento.classList.remove("mensaje-error");
+    }
+  }
+
+  // Nuevo: método para limpiar el mensaje en la interfaz
+  limpiarMensaje() {
+    this.mensajeElemento.textContent = "";
+    this.mensajeElemento.classList.remove("mensaje-error");
+  }
 }
 
 const miCalculadora = new Calculadora();
-miCalculadora.ejecutarCalculadora();

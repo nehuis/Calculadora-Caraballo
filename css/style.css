@@ -57,3 +57,8 @@ body{
 #igual:hover{
     background-color: #e75766;
 }
+.mensaje-error {
+    color: red;
+    font-weight: bold;
+    display: none; /* Oculta el mensaje de error inicialmente */
+}
