@@ -8,17 +8,6 @@ class Calculadora {
     this.clickEnabled = true;
   }
 
-  async cargarDatosDesdeJSON() {
-    try {
-      const response = await fetch('../data.json');
-      const datos = await response.json();
-      return datos;
-    } catch (error) {
-      console.error('Error al cargar datos desde JSON:', error);
-      throw error;
-    }
-  }
-
   ejecutarCalculadora() {
     this.botones.forEach((boton) => {
       boton.addEventListener("click", () => {
@@ -82,13 +71,9 @@ class Calculadora {
     }
   }
 
-  async realizarOperacion() {
+  realizarOperacion() {
     try {
-      const datosJSON = await this.cargarDatosDesdeJSON();
       const resultado = this.calcularOperacion(this.operacionActual);
-
-      const sumaResultados = datosJSON.reduce((suma, dato) => suma + dato.result, 0);
-
       this.registrarResultado(this.operacionActual, resultado);
       this.mostrarResultadoEnPantalla(resultado);
     } catch {
