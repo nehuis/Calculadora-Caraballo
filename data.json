@@ -1,10 +1,10 @@
 {
-    "tiposDeCambio": {
-        "USD_EUR": {
-            "tasaDeCambio": 0.85
+    "Tipos de cambio": {
+        "USD EUR": { 
+            "Tasa":0.85
         },
-        "USD_GBP": {
-            "tasaDeCambio": 0.75
+        "USD GBP": {
+            "Tasa":0.75
         }
     }
 }

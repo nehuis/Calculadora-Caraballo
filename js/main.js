@@ -7,10 +7,7 @@ class Calculadora {
     this.tiposDeCambio = null;
     this.loadResultados();
     this.clickEnabled = true;
-
-    // Nuevo: elemento para mostrar mensajes
     this.mensajeElemento = document.getElementById("mensaje");
-
     this.ejecutarCalculadora();
     this.obtenerTiposDeCambio();
   }
@@ -53,19 +50,15 @@ class Calculadora {
       .then(response => response.json())
       .then(data => {
         this.tiposDeCambio = data.tiposDeCambio;
-        // Nuevo: mostrar mensaje en la consola sin afectar la página
-        this.mostrarMensajeEnConsola("Tipos de cambio cargados: " + JSON.stringify(data));
+        this.mostrarMensaje(JSON.stringify(data));
       })
       .catch(error => {
-        // Nuevo: mostrar mensaje en la consola sin afectar la página
-        this.mostrarMensajeEnConsola("Error al cargar los tipos de cambio: " + error);
+        this.mostrarMensaje("Error al cargar los tipos de cambio: " + error, true);
       });
   }
 
   agregarCaracter(caracter) {
     const ultimoCaracter = this.operacionActual.slice(-1);
-
-    // Evitar duplicar operadores
     if (this.esOperador(caracter) && this.esOperador(ultimoCaracter)) {
       return;
     }
@@ -81,7 +74,6 @@ class Calculadora {
       this.operacionActual += caracter;
     }
 
-    // Limpiar el mensaje después de agregar un nuevo caracter
     this.limpiarMensaje();
   }
 
@@ -93,7 +85,6 @@ class Calculadora {
   limpiarPantalla() {
     this.pantalla.textContent = "0";
     this.operacionActual = "";
-    // Nuevo: limpiar el mensaje después de limpiar la pantalla
     this.limpiarMensaje();
   }
 
@@ -130,7 +121,6 @@ class Calculadora {
 
   mostrarErrorEnPantalla() {
     this.pantalla.textContent = "Error";
-    // Nuevo: mostrar mensaje de error
     this.mostrarMensaje("Error en la operación", true);
   }
 
@@ -159,24 +149,20 @@ class Calculadora {
     return Function('"use strict";return (' + operacion + ')')();
   }
 
-  // Nuevo: método para mostrar mensajes en la consola sin afectar la página
-  mostrarMensajeEnConsola(mensaje) {
-    console.log(mensaje);
-  }
-
-  // Nuevo: método para mostrar mensajes en la interfaz
   mostrarMensaje(mensaje, esError = false) {
     this.mensajeElemento.textContent = mensaje;
 
-    // Nuevo: mostrar o ocultar el mensaje de error según sea necesario
     if (esError) {
       this.mensajeElemento.classList.add("mensaje-error");
     } else {
       this.mensajeElemento.classList.remove("mensaje-error");
     }
+
+    setTimeout(() => {
+      this.limpiarMensaje();
+    }, 10000);
   }
 
-  // Nuevo: método para limpiar el mensaje en la interfaz
   limpiarMensaje() {
     this.mensajeElemento.textContent = "";
     this.mensajeElemento.classList.remove("mensaje-error");
