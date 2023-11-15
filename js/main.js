@@ -121,7 +121,6 @@ class Calculadora {
 
   mostrarErrorEnPantalla() {
     this.pantalla.textContent = "Error";
-    this.mostrarMensaje("Error en la operación", true);
   }
 
   mostrarResultados() {
@@ -151,16 +150,14 @@ class Calculadora {
 
   mostrarMensaje(mensaje, esError = false) {
     this.mensajeElemento.textContent = mensaje;
-
     if (esError) {
       this.mensajeElemento.classList.add("mensaje-error");
     } else {
       this.mensajeElemento.classList.remove("mensaje-error");
     }
-
     setTimeout(() => {
       this.limpiarMensaje();
-    }, 10000);
+    }, 5000);
   }
 
   limpiarMensaje() {
