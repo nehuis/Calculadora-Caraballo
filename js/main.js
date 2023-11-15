@@ -11,32 +11,26 @@ class Calculadora {
     this.ejecutarCalculadora();
     this.obtenerTiposDeCambio();
   }
-
   ejecutarCalculadora() {
     this.botones.forEach((boton) => {
       boton.addEventListener("click", () => {
         const botonApretado = boton.textContent;
-
         if (boton.id === "c") {
           this.limpiarPantalla();
           return;
         }
-
         if (boton.id === "borrar") {
           this.borrarCaracter();
           return;
         }
-
         if (boton.id === "igual" && this.clickEnabled) {
           this.clickEnabled = false;
           this.realizarOperacion();
           this.clickEnabled = true;
           return;
         }
-
         this.agregarCaracter(botonApretado);
       });
-
       boton.addEventListener("dblclick", () => {
         if (boton.id === "igual") {
           this.mostrarResultados();
@@ -49,11 +43,20 @@ class Calculadora {
     fetch('data.json')
       .then(response => response.json())
       .then(data => {
-        this.tiposDeCambio = data.tiposDeCambio;
-        this.mostrarMensaje(JSON.stringify(data));
+        const tiposDeCambio = data["Tipos de cambio"];
+        let displayText = "Tipos de cambio:\n\n";
+
+        for (const key in tiposDeCambio) {
+          if (tiposDeCambio.hasOwnProperty(key)) {
+            const tasa = tiposDeCambio[key].Tasa;
+            displayText += `${key}: ${tasa}\n`;
+          }
+        }
+
+        this.mostrarMensaje(displayText);
       })
       .catch(error => {
-        this.mostrarMensaje("Error al cargar los tipos de cambio: " + error, true);
+        console.error("Error al obtener los tipos de cambio:", error);
       });
   }
 
@@ -62,7 +65,6 @@ class Calculadora {
     if (this.esOperador(caracter) && this.esOperador(ultimoCaracter)) {
       return;
     }
-
     if (
       this.pantalla.textContent === "0" ||
       this.pantalla.textContent === "Error"
@@ -73,7 +75,6 @@ class Calculadora {
       this.pantalla.textContent += caracter;
       this.operacionActual += caracter;
     }
-
     this.limpiarMensaje();
   }
 
@@ -121,11 +122,11 @@ class Calculadora {
 
   mostrarErrorEnPantalla() {
     this.pantalla.textContent = "Error";
+    this.mostrarMensaje("Error en la operación", true);
   }
 
   mostrarResultados() {
     this.pantalla.innerHTML = "";
-
     this.resultados.forEach(({ operacion, resultado }) => {
       const resultadoItem = document.createElement("p");
       resultadoItem.textContent = `${operacion} = ${resultado}`;
@@ -143,9 +144,8 @@ class Calculadora {
       this.resultados = JSON.parse(storedResultados);
     }
   }
-
   calcularOperacion(operacion) {
-    return Function('"use strict";return (' + operacion + ')')();
+    return Function('"use strict";return (' + operacion + ")")();
   }
 
   mostrarMensaje(mensaje, esError = false) {

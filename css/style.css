@@ -57,7 +57,11 @@ body{
 #igual:hover{
     background-color: #e75766;
 }
-#mensaje {
+#mensaje{
+    font-family: Arial, sans-serif;
+    font-size: 20px;
     color: whitesmoke;
-    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap;
 }
