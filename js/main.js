@@ -4,13 +4,24 @@ class Calculadora {
     this.pantalla = document.querySelector(".pantalla");
     this.botones = document.querySelectorAll(".btn");
     this.operacionActual = "";
-    this.tiposDeCambio = null;
-    this.loadResultados();
     this.clickEnabled = true;
-    this.mensajeElemento = document.getElementById("mensaje");
-    this.ejecutarCalculadora();
-    this.obtenerTiposDeCambio();
+    this.configuracion = null;
+    this.obtenerConfiguracion();
   }
+
+  obtenerConfiguracion() {
+    fetch('data.json')
+      .then(response => response.json())
+      .then(data => {
+        this.configuracion = data;
+        this.ejecutarCalculadora();
+      })
+      .catch(error => {
+        this.mostrarErrorEnPantalla("Error al cargar la configuración: " + error.message);
+      });
+  }
+  
+
   ejecutarCalculadora() {
     this.botones.forEach((boton) => {
       boton.addEventListener("click", () => {
@@ -37,27 +48,6 @@ class Calculadora {
         }
       });
     });
-  }
-
-  obtenerTiposDeCambio() {
-    fetch('data.json')
-      .then(response => response.json())
-      .then(data => {
-        const tiposDeCambio = data["Tipos de cambio"];
-        let displayText = "Tipos de cambio:\n\n";
-
-        for (const key in tiposDeCambio) {
-          if (tiposDeCambio.hasOwnProperty(key)) {
-            const tasa = tiposDeCambio[key].Tasa;
-            displayText += `${key}: ${tasa}\n`;
-          }
-        }
-
-        this.mostrarMensaje(displayText);
-      })
-      .catch(error => {
-        console.error("Error al obtener los tipos de cambio:", error);
-      });
   }
 
   agregarCaracter(caracter) {
@@ -107,22 +97,26 @@ class Calculadora {
       this.registrarResultado(this.operacionActual, resultado);
       this.mostrarResultadoEnPantalla(resultado);
     } catch {
-      this.mostrarErrorEnPantalla();
+      this.mostrarErrorEnPantalla("Error");
     }
   }
 
   registrarResultado(operacion, resultado) {
     this.resultados.push({ operacion, resultado });
+
     this.saveResultados();
+
+    if (this.resultados.length > this.configuracion.historialLimitado) {
+      this.resultados.shift(); 
+    }
   }
 
   mostrarResultadoEnPantalla(resultado) {
-    this.pantalla.textContent = resultado.toString();
+    this.pantalla.textContent = resultado.toFixed(this.configuracion.precisionDecimales);
   }
 
-  mostrarErrorEnPantalla() {
-    this.pantalla.textContent = "Error";
-    this.mostrarMensaje("Error en la operación", true);
+  mostrarErrorEnPantalla(mensaje) {
+    this.pantalla.textContent = mensaje;
   }
 
   mostrarResultados() {
@@ -142,27 +136,14 @@ class Calculadora {
     const storedResultados = sessionStorage.getItem("resultados");
     if (storedResultados) {
       this.resultados = JSON.parse(storedResultados);
+      if (this.resultados.length > this.configuracion.historialLimitado) {
+        this.resultados = this.resultados.slice(-this.configuracion.historialLimitado);
+      }
     }
   }
+
   calcularOperacion(operacion) {
     return Function('"use strict";return (' + operacion + ")")();
-  }
-
-  mostrarMensaje(mensaje, esError = false) {
-    this.mensajeElemento.textContent = mensaje;
-    if (esError) {
-      this.mensajeElemento.classList.add("mensaje-error");
-    } else {
-      this.mensajeElemento.classList.remove("mensaje-error");
-    }
-    setTimeout(() => {
-      this.limpiarMensaje();
-    }, 5000);
-  }
-
-  limpiarMensaje() {
-    this.mensajeElemento.textContent = "";
-    this.mensajeElemento.classList.remove("mensaje-error");
   }
 }
 

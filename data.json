@@ -1,11 +1,4 @@
 {
-    "Tipos de cambio": {
-        "USD EUR": { 
-            "Tasa":0.85
-        },
-        "USD GBP": {
-            "Tasa":0.75
-        }
-    }
+    "precisionDecimales": 2,
+    "historialLimitado": 10
 }
-
