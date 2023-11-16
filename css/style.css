@@ -2,7 +2,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
 }
 body{
     min-height: 100vh;
@@ -64,4 +63,9 @@ body{
     padding: 10px;
     border-radius: 5px;
     white-space: pre-wrap;
+}
+@media only screen and (min-width: 425px){
+    .pantalla{
+        font-family: fantasy;
+    }
 }

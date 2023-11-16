@@ -17,7 +17,7 @@ class Calculadora {
         this.ejecutarCalculadora();
       })
       .catch(error => {
-        this.mostrarErrorEnPantalla("Error al cargar la configuración: " + error.message);
+        this.mostrarErrorEnPantalla("Error al cargar la configuración:" + error.message);
       });
   }
   
